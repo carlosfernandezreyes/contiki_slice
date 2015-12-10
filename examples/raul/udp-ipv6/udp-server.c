@@ -60,17 +60,17 @@ tcpip_handler(void)
     PRINTF("\n");
     if(strcmp((char *)uip_appdata,"GREEN BLINK") == 0){
       leds_on(LEDS_GREEN);
-      GPIO_SET_PIN(GPIO_D_BASE, 0x04);
+//      GPIO_SET_PIN(GPIO_D_BASE, 0x04);
       while RTIMER_CLOCK_LT(RTIMER_NOW(), end_time) {;}
       leds_off(LEDS_GREEN);
-      GPIO_CLR_PIN(GPIO_D_BASE, 0x04);
+//      GPIO_CLR_PIN(GPIO_D_BASE, 0x04);
       sprintf(buf, "GREEN OK");
     }else if(strcmp((char *)uip_appdata,"RED BLINK") == 0){
       leds_on(LEDS_RED);
-      GPIO_SET_PIN(GPIO_D_BASE, 0x08);
+//      GPIO_SET_PIN(GPIO_D_BASE, 0x08);
       while RTIMER_CLOCK_LT(RTIMER_NOW(), end_time) {;}
       leds_off(LEDS_RED);
-      GPIO_CLR_PIN(GPIO_D_BASE, 0x08);
+//      GPIO_CLR_PIN(GPIO_D_BASE, 0x08);
       sprintf(buf, "RED OK");
     }
 
@@ -109,7 +109,7 @@ PROCESS_THREAD(udp_server_process, ev, data)
 #endif /* UIP_CONF_ROUTER */
 
   //Set PORTD_2,3 to OUTPUT
-  GPIO_SET_OUTPUT(GPIO_D_BASE, 0x0C);
+//  GPIO_SET_OUTPUT(GPIO_D_BASE, 0x0C);
 
   PROCESS_BEGIN();
   PRINTF("UDP server started\n");

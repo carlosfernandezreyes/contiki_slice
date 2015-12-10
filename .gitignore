@@ -96,5 +96,7 @@ contiki-cc2530dk.lib
 #Clion files
 .idea/
 CMakeLists.txt
+
+#Non valuable files
 *.bak
 platform/pmeterdig/contiki-conf.h.gaia3

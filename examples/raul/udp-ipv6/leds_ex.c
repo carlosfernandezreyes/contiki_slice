@@ -74,7 +74,10 @@ PROCESS_THREAD(leds_ex, ev, data)
    GPIO_CLR_PIN(GPIO_D_BASE, 0x0C);
    portStatus = GPIO_READ_PIN(GPIO_D_BASE, 0x0C);
    printf("portStatus1: %u\n", portStatus);*/
-   fade(LEDS_YELLOW);
+   int k;
+   for(k = 0; k < 2000000; ++k)
+      asm("nop");
+   fade(LEDS_ALL);
 
 
 //   ledStatus=leds_get();

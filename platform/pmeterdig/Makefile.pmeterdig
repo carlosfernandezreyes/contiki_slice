@@ -11,6 +11,7 @@ CONTIKI_TARGET_SOURCEFILES += leds.c leds-arch.c
 CONTIKI_TARGET_SOURCEFILES += contiki-main.c
 CONTIKI_TARGET_SOURCEFILES += sensors.c smartrf-sensors.c
 CONTIKI_TARGET_SOURCEFILES += button-sensor.c ##als-sensor.c
+CONTIKI_TARGET_SOURCEFILES += cs5490.c
 
 ##CONTIKI_TARGET_SOURCEFILES += serial-line.c slip-arch.c slip.c
 ##CONTIKI_TARGET_SOURCEFILES += putchar.c debug.c
@@ -35,9 +36,16 @@ MODULES += core/net core/net/mac \
 
 BSL = $(CONTIKI)/tools/cc2538-bsl/cc2538-bsl.py
 
-%.upload: %.bin
+%.upload0: %.bin
 ifeq ($(wildcard $(BSL)), )
 	@echo "ERROR: Could not find the cc2538-bsl script. Did you run 'git submodule update --init' ?"
 else
-	python $(BSL) -e -w -v $<
+	python $(BSL) -p /dev/ttyUSB0 -e -w -v $<
+endif
+
+%.upload1: %.bin
+ifeq ($(wildcard $(BSL)), )
+	@echo "ERROR: Could not find the cc2538-bsl script. Did you run 'git submodule update --init' ?"
+else
+	python $(BSL) -p /dev/ttyUSB1 -e -w -v $<
 endif

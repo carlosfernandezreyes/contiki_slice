@@ -73,18 +73,18 @@ timeout_handler(void)
   if (foo) {
     sprintf(buf, "GREEN BLINK");
     leds_on(LEDS_GREEN);
-    GPIO_SET_PIN(GPIO_D_BASE, 0x04);
+    //GPIO_SET_PIN(GPIO_D_BASE, 0x04);
     while RTIMER_CLOCK_LT(RTIMER_NOW(), end_time){ ; }
     leds_off(LEDS_GREEN);
-    GPIO_CLR_PIN(GPIO_D_BASE, 0x04);
+    //GPIO_CLR_PIN(GPIO_D_BASE, 0x04);
   }else {
     sprintf(buf, "RED BLINK");
     leds_on(LEDS_RED);
-    GPIO_SET_PIN(GPIO_D_BASE, 0x08);
+    //GPIO_SET_PIN(GPIO_D_BASE, 0x08);
     while RTIMER_CLOCK_LT(RTIMER_NOW(), end_time)
     { ; }
     leds_off(LEDS_RED);
-    GPIO_CLR_PIN(GPIO_D_BASE, 0x08);
+    //GPIO_CLR_PIN(GPIO_D_BASE, 0x08);
   }
 
   printf(" (msg: %s)\n", buf);
@@ -171,7 +171,7 @@ PROCESS_THREAD(udp_client_process, ev, data)
   uip_ipaddr_t ipaddr;
   rtimer_clock_t  end_time;
   //Set PORTD_2,3 to OUTPUT
-  GPIO_SET_OUTPUT(GPIO_D_BASE, 0x0C);
+//  GPIO_SET_OUTPUT(GPIO_D_BASE, 0x0C);
 
   PROCESS_BEGIN();
   PRINTF("UDP client process started\n");
