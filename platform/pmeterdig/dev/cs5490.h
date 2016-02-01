@@ -46,7 +46,9 @@
 #define PRINTF(...)
 #endif
 /*---------------------------------------------------------------------------*/
-static process_event_t full_msg_in;
+//static process_event_t full_msg_in;
+static unsigned int ind;
+static unsigned int rdata[3];
 /*---------------------------------------------------------------------------*/
 static void byte2str(uint8_t byte, uint8_t str[]);
 static uint16_t ascii2Number(const unsigned char *s, uint8_t index);
@@ -55,5 +57,6 @@ static float dec_val(uint8_t MSB, uint8_t type);
 static float sig_dec_val(uint8_t MSB);
 unsigned int cs_uart_send(const unsigned char *s, unsigned int len);
 int cs_uart_rx(unsigned char c);
+//static void spi_init();
 
 #endif //CONTIKI_CS5490_H

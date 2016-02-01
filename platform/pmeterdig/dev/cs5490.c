@@ -45,8 +45,8 @@
 #include <string.h>
 
 /*---------------------------------------------------------------------------*/
-static unsigned int ind;
-static unsigned int rdata[3];
+//static unsigned int ind;
+//static unsigned int rdata[3];
 
 /*---------------------------------------------------------------------------*/
 static void
@@ -157,15 +157,47 @@ cs_uart_send(const unsigned char *s, unsigned int len)
 int
 cs_uart_rx(unsigned char c)
 {
-    rdata[ind++]=c;
+//    rdata[ind++]=c;
 
-//    PRINTF("Hex rdata: 0x%02X\n", c);
-    if(ind==3){
+    PRINTF("Hex rdata: 0x%02X\n", c);
+    /*if(ind==3){
         ind = 0;
         PRINTF("Ok!\n");
         process_post(PROCESS_CURRENT(), full_msg_in, NULL);
 //        process_post(PROCESS_BROADCAST, full_msg_in, NULL);
-    }
+    }*/
     return 1;
 }
 /*---------------------------------------------------------------------------*/
+//static void
+//spi_init(){
+//
+///******** Using UART1 ********/
+///******** Alternative 2: USART1 ********/
+//    PERCFG |= 0x02;	//Alternative 2
+//    //U1CSR &= 0x1F;
+//    P1SEL |= 0xE0; 	//PIN 7, 6, 5 peripheral; Master mode has no SS, to be done using IO (P0_6)
+//    P0SEL &= ~0x40; //PIN p0_6 = GPIO (SSN); 1 bit complement
+//    P0DIR |= 0x40;	//p0_6 as output
+//    //P0DIR |= 0xE0;  //???
+//
+///******** BAUD RATE ********/
+////Never to modify this param during a transference (UxCSR.ACTIVE = 1)
+////BaudRate to be set in PMeter register at 38400 baudios (default PM = 600)
+//    U1BAUD = 0x3B;	//Decimal 59 - Depending on the exponent (BAUD_E) it takes different baud rate values:
+//    //10->38400, 11->76800, 4->600
+//
+///******** MASTER MODE ********/
+//    //U1CSR &= ~0xA0;		//SPI as master; the others don't matter
+//    U1CSR |= 0x80;		//UART mode; RX not active yet
+//
+///******** PHASE, POLARITY AND BIT ORDER ********/
+//    //U1GCR = 0xEA;	//CPOL=1, CPHA=1, ORDER=1, BAUD_E=10
+//    //U1GCR = 0xEB;	//CPOL=1, CPHA=1, ORDER=1, BAUD_E=11(76800bps)
+//    //U1GCR = 0x6A;	//CPOL=0, CPHA=1, ORDER=1, BAUD_E=10
+//    //U1GCR = 0xAA;	//CPOL=1, CPHA=0, ORDER=1, BAUD_E=10
+//    //U1GCR = 0xCA;	//CPOL=1, CPHA=1, ORDER=0(LSB), BAUD_E=10
+//    U1GCR = 0x04;	//CPOL=0, CPHA=0, ORDER=0(LSB), BAUD_E=4
+//    //U1GCR = 0x24;	//CPOL=0, CPHA=0, ORDER=1(MSB), BAUD_E=4
+//}
+///*---------------------------------------------------------------------------*/

@@ -103,45 +103,56 @@ rt_callback(struct rtimer *t, void *ptr)
 int
 cs_uart_rx(unsigned char c)
 {
+//  rdata[ind++]=c;
   printf("Hex rdata: 0x%02X\n", c);
+//  if(ind==3){
+//    ind = 0;
+//    PRINTF("Ok!\n");
+//    process_post(PROCESS_CURRENT(), full_msg_in, NULL);
+//        process_post(PROCESS_BROADCAST, full_msg_in, NULL);
+//  }
   return 1;
 }
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(cc2538_uart_demo_process, ev, data)
 {
-  char string0[25];
-  char string1[25];
+char string0[25];
+char string1[25];
 
-  PROCESS_BEGIN();
+//printf("Process to begin\n");
+PROCESS_BEGIN();
+//printf("Process begun\n");
+uart_set_input(0, cs_uart_rx);
+counter = 0;
 
-  uart_set_input(0, cs_uart_rx);
+etimer_set(&et, CLOCK_SECOND);
 
-  counter = 0;
+while(1) {
+//printf("While\n");
+PROCESS_YIELD();
+//printf("Yield\n");
 
-  etimer_set(&et, CLOCK_SECOND);
+if(ev == PROCESS_EVENT_TIMER) {
+//printf("PROCESS_EVENT_TIMER\n");
+leds_on(LEDS_PERIODIC);
 
-  while(1) {
+sprintf(string0, "Test 0x%02x to UART0\n", counter);
+sprintf(string1, "Test 0x%02x to UART1\n", counter);
 
-    PROCESS_YIELD();
+uart0_send_bytes((uint8_t *)string0,sizeof(string0)-1);
+//uart1_send_bytes((uint8_t *)string1,sizeof(string1)-1);
 
-    if(ev == PROCESS_EVENT_TIMER) {
-      leds_on(LEDS_PERIODIC);
+//PROCESS_WAIT_UNTIL(ev == full_msg_in);
+//printf("ev == full_msg_in\n");
 
-      printf("Sending %02x\n", counter);
-      sprintf(string0, "Test 0x%02x to UART0\n", counter);
-      sprintf(string1, "Test 0x%02x to UART1\n", counter);
+etimer_set(&et, CLOCK_SECOND);
+rtimer_set(&rt, RTIMER_NOW() + LEDS_OFF_HYSTERISIS, 1,
+rt_callback, NULL);
+counter++;
+}
+}
 
-      uart0_send_bytes((uint8_t *)string0,sizeof(string0)-1);
-      uart1_send_bytes((uint8_t *)string1,sizeof(string1)-1);
-
-      etimer_set(&et, CLOCK_SECOND);
-      rtimer_set(&rt, RTIMER_NOW() + LEDS_OFF_HYSTERISIS, 1,
-                 rt_callback, NULL);
-      counter++;
-    }
-  }
-
-  PROCESS_END();
+PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
 /**

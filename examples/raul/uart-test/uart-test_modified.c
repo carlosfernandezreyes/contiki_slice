@@ -49,50 +49,26 @@
 #include "sys/rtimer.h"
 #include "dev/leds.h"
 #include "dev/uart.h"
+#include "dev/cs5490.h"
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
+
 /*---------------------------------------------------------------------------*/
 #define LOOP_INTERVAL       CLOCK_SECOND
 #define LEDS_OFF_HYSTERISIS (RTIMER_SECOND >> 1)
 #define LEDS_PERIODIC       LEDS_GREEN
 /*---------------------------------------------------------------------------*/
-static struct etimer et;
+static struct etimer et;//, etimeout;
 static struct rtimer rt;
 static uint16_t counter;
+//static unsigned int ind;
+//static unsigned int rdata[3];
+//static process_event_t full_msg_in;
 /*---------------------------------------------------------------------------*/
 PROCESS(cc2538_uart_demo_process, "cc2538 uart demo process");
 AUTOSTART_PROCESSES(&cc2538_uart_demo_process);
-/*---------------------------------------------------------------------------*/
-unsigned int
-uart0_send_bytes(const unsigned char *s, unsigned int len)
-{
-  unsigned int i = 0;
-
-  while(s && *s != 0) {
-    if(i >= len) {
-      break;
-    }
-    uart_write_byte(0,*s++);
-    i++;
-  }
-  return i;
-}
-/*---------------------------------------------------------------------------*/
-unsigned int
-uart1_send_bytes(const unsigned char *s, unsigned int len)
-{
-  unsigned int i = 0;
-
-  while(s && *s != 0) {
-    if(i >= len) {
-      break;
-    }
-    uart_write_byte(1,*s++);
-    i++;
-  }
-  return i;
-}
 /*---------------------------------------------------------------------------*/
 void
 rt_callback(struct rtimer *t, void *ptr)
@@ -100,41 +76,73 @@ rt_callback(struct rtimer *t, void *ptr)
   leds_off(LEDS_PERIODIC);
 }
 /*---------------------------------------------------------------------------*/
-int
-cs_uart_rx(unsigned char c)
-{
-  printf("Hex rdata: 0x%02X\n", c);
-  return 1;
-}
-/*---------------------------------------------------------------------------*/
 PROCESS_THREAD(cc2538_uart_demo_process, ev, data)
 {
   char string0[25];
   char string1[25];
+  int ptoproc;
+//  int i;
+//  uint8_t MSB=100;
+//  uint8_t Medida_MSB[8];
+
+//  byte2str(MSB, Medida_MSB);
+
+  unsigned int addr = 0x323130;
+//  unsigned long info = 0x343332;
+//  unsigned int instr = 0x00;
 
   PROCESS_BEGIN();
 
-  uart_set_input(0, cs_uart_rx);
-
   counter = 0;
 
+//  uart_set_input(0, uart_rx);
+  uart_set_input(0, cs_uart_rx);
   etimer_set(&et, CLOCK_SECOND);
 
+  PRINTF("Before while...");
   while(1) {
 
+    PRINTF("While...");
     PROCESS_YIELD();
 
     if(ev == PROCESS_EVENT_TIMER) {
+      PRINTF("if(ev == PROCESS_EVENT_TIMER)...");
       leds_on(LEDS_PERIODIC);
 
-      printf("Sending %02x\n", counter);
       sprintf(string0, "Test 0x%02x to UART0\n", counter);
       sprintf(string1, "Test 0x%02x to UART1\n", counter);
 
-      uart0_send_bytes((uint8_t *)string0,sizeof(string0)-1);
-      uart1_send_bytes((uint8_t *)string1,sizeof(string1)-1);
+      memcpy(string0, "", sizeof(string0));
+      memcpy(string0, &addr, sizeof(addr));
+//      memcpy(string0, "01234", 5);
 
-      etimer_set(&et, CLOCK_SECOND);
+//      memcpy(string0+sizeof(addr)-2, &info, sizeof(info));
+//      memcpy(string0+sizeof(info)-1, &addr, sizeof(addr));
+
+        printf("string0 to send:%s\n\n", string0);
+        PRINTF("string0 to send:%s\n\n", string0);
+
+      cs_uart_send((uint8_t *)string0,sizeof(string0)-1);
+
+      /*uart0_send_bytes((uint8_t *)string0,sizeof(string0)-1);
+      uart1_send_bytes((uint8_t *)string1,sizeof(string1)-1);*/
+
+
+      /*etimer_set(&etimeout, CLOCK_SECOND*1);
+      PROCESS_WAIT_UNTIL(ev == full_msg_in || etimer_expired(&etimeout));
+      PROCESS_YIELD();
+      PRINTF("Data: ");
+      for (i=0;i<3;i++)
+        PRINTF("%u",rdata[i]);
+      PRINTF("\n");*/
+
+//      PROCESS_WAIT_UNTIL(ev == full_msg_in);
+//      ptoproc = (int) PROCESS_CURRENT();
+//      PRINTF("Pointer to current process:%u\n", ptoproc);
+
+
+
+      etimer_set(&et, CLOCK_SECOND*2);
       rtimer_set(&rt, RTIMER_NOW() + LEDS_OFF_HYSTERISIS, 1,
                  rt_callback, NULL);
       counter++;

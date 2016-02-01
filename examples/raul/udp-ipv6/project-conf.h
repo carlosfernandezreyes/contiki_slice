@@ -40,6 +40,7 @@
 
 //#define NETSTACK_CONF_RDC     nullrdc_driver
 //#define STARTUP_CONF_VERBOSE        0 /**< Set to 0 to decrease startup verbosity */
+//#define DBG_CONF_USB            1 /** All debugging over UART by default */
 
 #endif /* PROJECT_CONF_H_ */
 

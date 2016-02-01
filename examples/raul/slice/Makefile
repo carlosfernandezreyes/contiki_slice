@@ -1,6 +1,5 @@
-#all: udp-server udp-client
-#all: leds_ex
-all: uart-test
+DEFINES+=PROJECT_CONF_H=\"project-conf.h\"
+all: power-metering
 
 CONTIKI = ../../..
 CONTIKI_WITH_IPV6 = 1
